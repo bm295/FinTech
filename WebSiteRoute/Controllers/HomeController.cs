@@ -1,34 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using WebSiteRoute.Application.FlightAltitudes;
 using WebSiteRoute.Models;
-using WebSiteRoute.Services;
+using WebSiteRoute.Presentation.ViewModels;
 
 namespace WebSiteRoute.Controllers;
 
-public class HomeController(ILogger<HomeController> logger) : Controller
+public class HomeController(ILogger<HomeController> logger, GetFlightAltitudeDashboardQuery dashboardQuery) : Controller
 {
-    public async Task<IActionResult> Index([FromServices] InfluxDbService influxDbService)
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        var results = await influxDbService.QueryAsync(async query =>
-        {
-            var flux = "from(bucket:\"test-bucket\") |> range(start: 0)";
-            var tables = await query.QueryAsync(flux, "organization");
+        var dashboard = await dashboardQuery.ExecuteAsync(cancellationToken);
+        var viewModel = FlightAltitudeDashboardViewModel.FromDashboard(dashboard);
 
-            return tables.SelectMany(table => table.Records.Select(
-                record => new AltitudeModel
-                {
-                    Time = record.GetTime().ToString(),
-                    Altitude = int.Parse(record.GetValue().ToString()!)
-                }));
-        });
+        logger.LogInformation("Rendered flight status message for altitude {Altitude}", dashboard.SampleAltitude);
 
-        var messageProvider = new PassengerFlightStatusMessages();
-        var sampleAltitude = results.FirstOrDefault()?.Altitude ?? 0;
-        ViewData["FlightStatusMessage"] = messageProvider.GetStatusMessage(sampleAltitude);
-
-        logger.LogInformation("Rendered flight status message for altitude {Altitude}", sampleAltitude);
-
-        return View(results);
+        return View(viewModel);
     }
 
     public IActionResult Privacy()

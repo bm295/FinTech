@@ -1,6 +1,11 @@
-namespace WebSiteRoute.Models;
+namespace WebSiteRoute.Domain.Services;
 
-public class FlightStatusMessages
+public interface IFlightStatusMessageProvider
+{
+    string GetStatusMessage(int altitude);
+}
+
+public class FlightStatusMessages : IFlightStatusMessageProvider
 {
     public virtual string GetStatusMessage(int altitude)
         => $"Generic flight status: altitude {altitude} ft.";

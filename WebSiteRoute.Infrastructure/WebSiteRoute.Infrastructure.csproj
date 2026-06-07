@@ -1,23 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>14.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>6a4a9e89-f889-4a97-8883-931a9f059210</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Coravel" Version="4.1.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="InfluxDB.Client" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\WebSiteRoute.Application\WebSiteRoute.Application.csproj" />
     <ProjectReference Include="..\WebSiteRoute.Domain\WebSiteRoute.Domain.csproj" />
-    <ProjectReference Include="..\WebSiteRoute.Infrastructure\WebSiteRoute.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

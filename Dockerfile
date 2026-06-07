@@ -8,6 +8,9 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY ["WebSiteRoute/WebSiteRoute.csproj", "WebSiteRoute/"]
+COPY ["WebSiteRoute.Domain/WebSiteRoute.Domain.csproj", "WebSiteRoute.Domain/"]
+COPY ["WebSiteRoute.Application/WebSiteRoute.Application.csproj", "WebSiteRoute.Application/"]
+COPY ["WebSiteRoute.Infrastructure/WebSiteRoute.Infrastructure.csproj", "WebSiteRoute.Infrastructure/"]
 RUN dotnet restore "WebSiteRoute/WebSiteRoute.csproj"
 COPY . .
 WORKDIR "/src/WebSiteRoute"

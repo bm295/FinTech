@@ -1,4 +1,4 @@
-@model IEnumerable<AltitudeModel>
+@model FlightAltitudeDashboardViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -8,10 +8,10 @@
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 
-<p class="alert alert-info">@ViewData["FlightStatusMessage"]</p>
+<p class="alert alert-info">@Model.FlightStatusMessage</p>
 
 <ul>
-    @foreach (var record in Model)
+    @foreach (var record in Model.Readings)
     {
         <li>@record.DisplayText</li>
     }

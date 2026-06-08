@@ -39,6 +39,21 @@ For local development, set the token with user secrets:
 dotnet user-secrets set "InfluxDb:Token" "<token>" --project WebSiteRoute/WebSiteRoute.csproj
 ```
 
+Azure App Configuration is optional. When `AzureAppConfiguration:ConnectionString` or `AzureAppConfiguration:Endpoint` is set, the web app adds Azure App Configuration as a configuration source and enables request-driven refresh. Microsoft Entra ID via the startup-provided `DefaultAzureCredential` is used when configuring an endpoint.
+
+```json
+{
+  "AzureAppConfiguration": {
+    "Enabled": true,
+    "Endpoint": "https://<store-name>.azconfig.io",
+    "ConnectionString": "<optional connection string>",
+    "KeyFilter": "*",
+    "Label": null,
+    "RefreshIntervalSeconds": 30
+  }
+}
+```
+
 ## Run locally
 
 From the repository root:

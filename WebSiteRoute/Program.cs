@@ -1,9 +1,13 @@
+using Azure.Identity;
 using Coravel;
 using WebSiteRoute.Composition;
+using WebSiteRoute.Extensions;
 using WebSiteRoute.ScheduledTasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var azureCredential = new DefaultAzureCredential();
+builder.AddAzureAppConfiguration(azureCredential);
 builder.Services.AddControllersWithViews();
 builder.Services.AddCleanArchitecture(builder.Configuration);
 builder.Services.AddTransient<RecordRandomAltitudeTask>();
@@ -21,6 +25,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAzureAppConfigurationRefresh();
 
 app.UseAuthorization();
 

@@ -24,6 +24,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        services.AddSingleton(TimeProvider.System);
         services.AddScoped<GetFlightAltitudeDashboardQuery>();
         services.AddScoped<RecordRandomAltitudeCommand>();
         return services;
@@ -40,7 +41,11 @@ public static class DependencyInjection
             PlaneId = configuration["InfluxDb:PlaneId"] ?? "test-plane"
         });
         services.AddSingleton<IAltitudeGenerator, RandomAltitudeGenerator>();
-        services.AddScoped<IAltitudeReadingRepository, InfluxDbAltitudeReadingRepository>();
+        services.AddScoped<InfluxDbAltitudeReadingRepository>();
+        services.AddScoped<IAltitudeReadingReader>(serviceProvider =>
+            serviceProvider.GetRequiredService<InfluxDbAltitudeReadingRepository>());
+        services.AddScoped<IAltitudeReadingWriter>(serviceProvider =>
+            serviceProvider.GetRequiredService<InfluxDbAltitudeReadingRepository>());
 
         return services;
     }

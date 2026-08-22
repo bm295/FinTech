@@ -6,7 +6,8 @@ using WebSiteRoute.Domain.Entities;
 
 namespace WebSiteRoute.Infrastructure.InfluxDb;
 
-public sealed class InfluxDbAltitudeReadingRepository(InfluxDbOptions options) : IAltitudeReadingRepository
+public sealed class InfluxDbAltitudeReadingRepository(InfluxDbOptions options)
+    : IAltitudeReadingReader, IAltitudeReadingWriter
 {
     public async Task<IReadOnlyCollection<AltitudeReading>> GetReadingsAsync(CancellationToken cancellationToken = default)
     {

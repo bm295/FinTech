@@ -4,12 +4,12 @@ using WebSiteRoute.Domain.Services;
 namespace WebSiteRoute.Application.FlightAltitudes;
 
 public sealed class GetFlightAltitudeDashboardQuery(
-    IAltitudeReadingRepository altitudeReadingRepository,
+    IAltitudeReadingReader altitudeReadingReader,
     IFlightStatusMessageProvider flightStatusMessageProvider)
 {
     public async Task<FlightAltitudeDashboard> ExecuteAsync(CancellationToken cancellationToken = default)
     {
-        var readings = await altitudeReadingRepository.GetReadingsAsync(cancellationToken);
+        var readings = await altitudeReadingReader.GetReadingsAsync(cancellationToken);
         var sampleAltitude = readings.FirstOrDefault()?.Altitude ?? 0;
         var message = flightStatusMessageProvider.GetStatusMessage(sampleAltitude);
 

@@ -5,7 +5,7 @@ This repository uses a Clean Architecture layout for a small ASP.NET Core MVC fl
 ## Project structure
 
 - `WebSiteRoute.Domain` contains enterprise rules and entities, including altitude readings and flight-status message policy.
-- `WebSiteRoute.Application` contains use cases and ports, including dashboard queries and altitude-recording commands.
+- `WebSiteRoute.Application` contains use cases and narrow read/write ports, including dashboard queries and altitude-recording commands.
 - `WebSiteRoute.Infrastructure` contains adapters for external systems, including InfluxDB persistence and random altitude generation.
 - `WebSiteRoute` is the presentation/composition project. It contains MVC controllers, Razor views, scheduled tasks, and dependency injection wiring.
 
@@ -68,9 +68,22 @@ Then open the URL shown in the terminal (for example `https://localhost:xxxx`).
 ## Clean Architecture flow
 
 1. `HomeController` asks the application layer for a flight-altitude dashboard.
-2. `GetFlightAltitudeDashboardQuery` loads readings through the `IAltitudeReadingRepository` port and applies the domain flight-status policy.
+2. `GetFlightAltitudeDashboardQuery` loads readings through the `IAltitudeReadingReader` port and applies the domain flight-status policy.
 3. `InfluxDbAltitudeReadingRepository` implements the persistence port using the InfluxDB client.
 4. `RecordRandomAltitudeTask` is the Coravel scheduled task adapter that invokes `RecordRandomAltitudeCommand`.
+
+The dashboard query depends only on `IAltitudeReadingReader`, while the recording command depends only on
+`IAltitudeReadingWriter`. The single InfluxDB adapter implements both ports without forcing either use case to
+depend on operations it does not use. Time is supplied to the recording command through .NET's `TimeProvider`,
+keeping the use case deterministic in tests while production uses `TimeProvider.System`.
+
+## Tests
+
+Run the application and architecture tests from the repository root:
+
+```bash
+dotnet test WebSiteRoute.sln
+```
 
 ## Run with Docker
 

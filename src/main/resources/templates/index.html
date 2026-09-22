@@ -1,0 +1,1 @@
+<!DOCTYPE html><html lang="en" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>WebSiteRoute</title></head><body><h1>Flight altitude dashboard</h1><p th:text="${dashboard.flightStatusMessage}"></p><ul><li th:each="reading : ${dashboard.readings}" th:text="${reading.displayText()}"></li></ul><a href="/privacy">Privacy</a></body></html>

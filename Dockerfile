@@ -1,26 +1,12 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+COPY pom.xml .
+RUN mvn -q -DskipTests dependency:go-offline
+COPY src src
+RUN mvn -q -DskipTests package
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-WORKDIR /src
-COPY ["WebSiteRoute/WebSiteRoute.csproj", "WebSiteRoute/"]
-COPY ["WebSiteRoute.Domain/WebSiteRoute.Domain.csproj", "WebSiteRoute.Domain/"]
-COPY ["WebSiteRoute.Application/WebSiteRoute.Application.csproj", "WebSiteRoute.Application/"]
-COPY ["WebSiteRoute.Infrastructure/WebSiteRoute.Infrastructure.csproj", "WebSiteRoute.Infrastructure/"]
-RUN dotnet restore "WebSiteRoute/WebSiteRoute.csproj"
-COPY . .
-WORKDIR "/src/WebSiteRoute"
-RUN dotnet build "WebSiteRoute.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "WebSiteRoute.csproj" -c Release -o /app/publish
-
-FROM base AS final
+FROM eclipse-temurin:21-jre
 WORKDIR /app
-COPY --from=publish /app/publish .
-# ENTRYPOINT ["dotnet", "WebSiteRoute.dll"]
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet WebSiteRoute.dll
+COPY --from=build /app/target/website-route-1.0.0.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FinTech Payment Activity</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 3rem auto; max-width: 720px; padding: 0 1rem; color: #17202a; }
+    .payment { border: 1px solid #dfe6e9; border-radius: 10px; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    .amount { font-size: 1.4rem; font-weight: 700; }
+    .status { color: #177245; font-weight: 600; text-transform: capitalize; }
+    .error { color: #b42318; }
+  </style>
+</head>
+<body>
+  <h1>Payment activity</h1>
+  <p>Real-time ledger visibility for your payments.</p>
+  <section id="ledger" aria-live="polite">Loading payment activity...</section>
+  <script>
+    fetch('/api/payments')
+      .then(response => {
+        if (!response.ok) throw new Error('Unable to load payment activity');
+        return response.json();
+      })
+      .then(payments => {
+        const ledger = document.getElementById('ledger');
+        ledger.replaceChildren(...payments.map(payment => {
+          const item = document.createElement('article');
+          item.className = 'payment';
+          item.innerHTML = `<span><strong>Payment ${payment.id}</strong><br><span class="status">${payment.status}</span></span><span class="amount">${Number(payment.amount).toFixed(2)} ${payment.currency}</span>`;
+          return item;
+        }));
+      })
+      .catch(error => {
+        document.getElementById('ledger').innerHTML = `<p class="error">${error.message}</p>`;
+      });
+  </script>
+</body>
+</html>

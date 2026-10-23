@@ -1,4 +1,4 @@
-package com.websiteroute.domain;
+package com.websiteroute.payment.domain;
 
 import java.math.BigDecimal;
 

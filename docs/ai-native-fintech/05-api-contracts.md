@@ -5,6 +5,31 @@
 - Idempotency key required for mutation endpoints involving funds movement.
 - Correlation ID propagated in request/response headers.
 
+## Implemented allocation preview
+
+### POST /api/payments/allocations
+Calculates proportional allocations without initiating payments or changing balances.
+
+- Required: nonnegative `amount`, supported ISO 4217 `currency` with defined minor units,
+  and a nonempty array of positive whole-number `weights`.
+- Amount must be exactly representable at the currency's precision; extra trailing zeros are accepted.
+- Returns `amount`, `currency`, GCD-reduced `weights`, and `allocations` in recipient order.
+- Allocations sum exactly to the amount. Largest remainders receive leftover minor units;
+  ties favor earlier recipients.
+- Invalid inputs return HTTP 400 with problem details including `status` and `detail`.
+
+Example request:
+
+```json
+{"amount":50.00,"currency":"USD","weights":[1200,1800]}
+```
+
+Example response:
+
+```json
+{"amount":50.00,"currency":"USD","weights":[2,3],"allocations":[20.00,30.00]}
+```
+
 ## Identity & onboarding
 
 ### POST /v1/auth/register
@@ -57,7 +82,7 @@ Natural language assistant for customer.
 Generates case summary and suggested action.
 
 ## Error model
-All errors include:
+For the planned `/v1` APIs, all errors include:
 - `code`
 - `message`
 - `correlation_id`

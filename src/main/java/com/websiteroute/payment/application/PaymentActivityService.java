@@ -1,6 +1,6 @@
-package com.websiteroute.application;
+package com.websiteroute.payment.application;
 
-import com.websiteroute.domain.Payment;
+import com.websiteroute.payment.domain.Payment;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Service;

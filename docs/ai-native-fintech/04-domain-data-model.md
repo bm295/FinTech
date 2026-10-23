@@ -42,6 +42,13 @@
 - `score`, `decision` (allow/review/deny)
 - `reasons[]`, `model_version`
 
+### PaymentAllocation (calculated preview)
+- `amount`, `currency`
+- GCD-reduced positive integer `weights` and corresponding `allocations`, in recipient order.
+- The allocator uses Euclid's remainder loop to simplify weights and distributes exact minor units
+  using largest remainders, with ties resolved by recipient order.
+- Allocations preserve the total amount and use the currency's precision.
+
 ### Case
 - `case_id`, `entity_type`, `entity_id`
 - `queue`, `assignee`, `status`

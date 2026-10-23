@@ -1,0 +1,71 @@
+name: Tests and coverage
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Tests and coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Run tests
+        id: tests
+        run: mvn --batch-mode --no-transfer-progress clean test
+
+      - name: Generate coverage report
+        if: ${{ !cancelled() && steps.tests.outcome != 'skipped' }}
+        run: mvn --batch-mode --no-transfer-progress jacoco:report
+
+      - name: Show code coverage
+        if: ${{ !cancelled() && steps.tests.outcome != 'skipped' }}
+        shell: python
+        run: |
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          report_path = Path("target/site/jacoco/jacoco.xml")
+          if report_path.is_file():
+              report = ET.parse(report_path).getroot()
+              lines = [
+                  "## Code coverage",
+                  "",
+                  "| Metric | Coverage | Covered / Total |",
+                  "| --- | ---: | ---: |",
+              ]
+              for counter in report.findall("counter"):
+                  covered = int(counter.attrib["covered"])
+                  total = covered + int(counter.attrib["missed"])
+                  coverage = f"{covered / total:.2%}" if total else "N/A"
+                  metric = counter.attrib["type"].title()
+                  lines.append(f"| {metric} | {coverage} | {covered} / {total} |")
+              summary = "\n".join(lines) + "\n"
+          else:
+              summary = "Coverage unavailable: tests did not produce a JaCoCo report.\n"
+
+          print(summary)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as output:
+              output.write(summary)
+
+          if not report_path.is_file():
+              raise SystemExit(1)

@@ -1,4 +1,4 @@
-package com.websiteroute.presentation;
+package com.websiteroute.payment.adapter.in.web;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import com.websiteroute.application.PaymentActivityService;
+import com.websiteroute.payment.application.PaymentActivityService;
 
 @WebMvcTest(PaymentActivityController.class)
 @Import(PaymentActivityService.class)
